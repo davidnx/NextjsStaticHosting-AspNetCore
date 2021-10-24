@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NextjsStaticHosting.Internals;
 
 namespace NextjsStaticHosting
@@ -24,10 +26,15 @@ namespace NextjsStaticHosting
         /// ]]>
         /// </code>
         /// </example>
-        public static void AddNextjsStaticHosting(this IServiceCollection services, Action<NextjsStaticHostingOptions> configuration = null)
+        public static void AddNextjsStaticHosting(this IServiceCollection services, Action<NextjsStaticHostingOptions> configureAction = null)
         {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.Configure(configuration);
+
+            if (configureAction != null)
+            {
+                services.Configure(configureAction);
+            }
+
             services.AddSingleton<FileProviderFactory>();
             services.AddSingleton<StaticFileOptionsProvider>();
         }
@@ -72,13 +79,22 @@ namespace NextjsStaticHosting
         /// ]]>
         /// </code>
         /// </example>
-        public static void MapNextjsStaticHtmls(this IEndpointRouteBuilder endpoints)
+        public static IEndpointConventionBuilder MapNextjsStaticHtmls(this IEndpointRouteBuilder endpoints)
         {
             _ = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
+
+            var options = endpoints.ServiceProvider.GetRequiredService<IOptions<NextjsStaticHostingOptions>>();
+            if (options.Value.ProxyToDevServer)
+            {
+                var logger = endpoints.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("NextjsStaticHostingExtensions");
+                logger.LogInformation($"{nameof(NextjsStaticHostingExtensions)} was configured with {nameof(NextjsStaticHostingOptions.ProxyToDevServer)}, skiping dynamic endpoint configuration.");
+                return new NullEndpointConventionBuilder();
+            }
 
             var staticFileOptionsProvider = endpoints.ServiceProvider.GetRequiredService<StaticFileOptionsProvider>();
             var dataSource = new NextjsEndpointDataSource(endpoints, staticFileOptionsProvider);
             endpoints.DataSources.Add(dataSource);
+            return dataSource.DefaultBuilder;
         }
 
         /// <summary>
@@ -105,8 +121,22 @@ namespace NextjsStaticHosting
         {
             _ = app ?? throw new ArgumentNullException(nameof(app));
 
+            var options = app.ApplicationServices.GetRequiredService<IOptions<NextjsStaticHostingOptions>>();
+            if (options.Value.ProxyToDevServer)
+            {
+                app.UseMiddleware<ProxyToDevServerMiddleware>();
+                return;
+            }
+
             var staticFileOptionsProvider = app.ApplicationServices.GetRequiredService<StaticFileOptionsProvider>();
             app.UseStaticFiles(staticFileOptionsProvider.StaticFileOptions);
+        }
+
+        private class NullEndpointConventionBuilder : IEndpointConventionBuilder
+        {
+            public void Add(Action<EndpointBuilder> convention)
+            {
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace NextjsStaticHosting
+﻿using System;
+
+namespace NextjsStaticHosting
 {
     /// <summary>
     /// Options for hosting exported Next.js client-side applications on ASP .NET Core.
@@ -17,5 +19,15 @@
         /// (i.e., the resulting physical path would be <c>DRIVE:\foo</c> because of the leading slash).
         /// </remarks>
         public string RootPath { get; set; }
+
+        /// <summary>
+        /// Uri to the Next.js dev server. Only applicable when <see cref="ProxyToDevServer"/> is true.
+        /// </summary>
+        public Uri DevServer { get; set; }
+
+        /// <summary>
+        /// Whether to proxy to a Next.js dev server instead of hosting static exported filed.
+        /// </summary>
+        public bool ProxyToDevServer { get; set; }
     }
 }

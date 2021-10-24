@@ -25,14 +25,17 @@ namespace NextjsStaticHosting.Internals
         private static readonly Regex slugRegex = new Regex(@"^\[([^\[\]]+?)\]$");
 
         private readonly IEndpointRouteBuilder endpointRouteBuilder;
-        private readonly IReadOnlyList<Endpoint> endpoints;
+        private readonly StaticFileOptionsProvider staticFileOptionsProvider;
+        private readonly List<Action<EndpointBuilder>> conventions;
+        private IReadOnlyList<Endpoint> endpoints;
 
         internal NextjsEndpointDataSource(IEndpointRouteBuilder endpointRouteBuilder, StaticFileOptionsProvider staticFileOptionsProvider)
         {
             this.endpointRouteBuilder = endpointRouteBuilder ?? throw new ArgumentNullException(nameof(endpointRouteBuilder));
-            _ = staticFileOptionsProvider ?? throw new ArgumentNullException(nameof(staticFileOptionsProvider));
+            this.staticFileOptionsProvider = staticFileOptionsProvider ?? throw new ArgumentNullException(nameof(staticFileOptionsProvider));
 
-            this.endpoints = this.Update(staticFileOptionsProvider);
+            this.conventions = new List<Action<EndpointBuilder>>();
+            this.DefaultBuilder = new ConventionBuilder(this.conventions);
         }
 
         /// <summary>
@@ -45,14 +48,31 @@ namespace NextjsStaticHosting.Internals
         /// <summary>
         /// Returns a read-only collection of <see cref="Endpoint"/> instances.
         /// </summary>
-        public override IReadOnlyList<Endpoint> Endpoints => this.endpoints;
+        public override IReadOnlyList<Endpoint> Endpoints
+        {
+            get
+            {
+                this.EnsureInitialized();
+                return this.endpoints;
+            }
+        }
 
-        private IReadOnlyList<Endpoint> Update(StaticFileOptionsProvider staticFileOptionsProvider)
+        public IEndpointConventionBuilder DefaultBuilder { get; }
+
+        private void EnsureInitialized()
+        {
+            if (this.endpoints == null)
+            {
+                this.endpoints = this.Update();
+            }
+        }
+
+        private IReadOnlyList<Endpoint> Update()
         {
             const string HtmlExtension = ".html";
             const string CatchAllSlugPrefix = "...";
 
-            var staticFileOptions = staticFileOptionsProvider.StaticFileOptions;
+            var staticFileOptions = this.staticFileOptionsProvider.StaticFileOptions;
             var requestDelegate = CreateRequestDelegate(this.endpointRouteBuilder, staticFileOptions);
             var endpoints = new List<Endpoint>();
             foreach (var filePath in TraverseFiles(staticFileOptions.FileProvider))
@@ -112,6 +132,11 @@ namespace NextjsStaticHosting.Internals
 
                 endpointBuilder.Metadata.Add(new StaticFileEndpointMetadata(filePath));
                 endpointBuilder.DisplayName = $"Next.js {filePath}";
+                foreach (var convention in this.conventions)
+                {
+                    convention(endpointBuilder);
+                }
+
                 var endpoint = endpointBuilder.Build();
                 endpoints.Add(endpoint);
             }
@@ -177,6 +202,21 @@ namespace NextjsStaticHosting.Internals
             }
 
             public string Path { get; }
+        }
+
+        private class ConventionBuilder : IEndpointConventionBuilder
+        {
+            private readonly List<Action<EndpointBuilder>> conventions;
+
+            public ConventionBuilder(List<Action<EndpointBuilder>> conventions)
+            {
+                this.conventions = conventions;
+            }
+
+            public void Add(Action<EndpointBuilder> convention)
+            {
+                this.conventions.Add(convention);
+            }
         }
     }
 }
