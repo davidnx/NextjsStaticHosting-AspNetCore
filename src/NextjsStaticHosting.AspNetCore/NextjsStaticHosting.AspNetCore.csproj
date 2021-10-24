@@ -18,6 +18,7 @@
     <PackageTags>aspnetcore;nextjs;next.js;next;react;nodejs;node.js;node</PackageTags>
     <ProjectUrl>https://github.com/davidnx/NextjsStaticHosting-AspNetCore</ProjectUrl>
     <RepositoryUrl>https://github.com/davidnx/NextjsStaticHosting-AspNetCore</RepositoryUrl>
+	<PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
   
   <ItemGroup>
@@ -28,4 +29,7 @@
     <PackageReference Include="Yarp.ReverseProxy" Version="1.0.0-rc.1.21520.4" />
   </ItemGroup>
 
+  <ItemGroup>
+	<None Include=".\logo.png" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 </Project>
