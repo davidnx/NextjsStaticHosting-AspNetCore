@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NextjsStaticHosting;
 
@@ -7,18 +8,23 @@ namespace NextjsStaticHostingSample
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        private readonly IConfiguration configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            this.configuration = configuration ?? throw new System.ArgumentNullException(nameof(configuration));
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             // Not necessary for the sample, added to demonstrate that controllers still work as usual
             services.AddControllers();
 
             // Step 1: Add Next.js hosting support and configure the root path (this is relative to IHostEnvironment.ContentRootPath).
+            services.Configure<NextjsStaticHostingOptions>(this.configuration.GetSection("NextjsStaticHosting"));
             services.AddNextjsStaticHosting(options => options.RootPath = "wwwroot/ClientApp");
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRouting();
