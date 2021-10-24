@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\NextjsStaticHosting.AspNetCore\NextjsStaticHosting.AspNetCore.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Where the Next.js compiled results are stored.
+         This should be the folder that gets generated when you run `npx next export` for your Next.js app. -->
+    <NextJsCompiledOutputPath>$(MSBuildProjectDirectory)\..\TrivialApp.Client\out</NextJsCompiledOutputPath>
+
+    <!-- Relative path where the Next.js compiled results will be published when the Publish target for the current project is called.
+         This will copy the static Next.js app outputs along with this server app so that the files can be served. -->
+    <NextJsOutputPublishRelativePath>clientdist</NextJsOutputPublishRelativePath>
+  </PropertyGroup>
+  <ItemGroup>
+    <_NextjsCustomFiles Include="$(NextJsCompiledOutputPath)\**" />
+    <DotNetPublishFiles Include="@(_NextjsCustomFiles)">
+      <DestinationRelativePath>$(NextJsOutputPublishRelativePath)\%(RecursiveDir)%(Filename)%(Extension)</DestinationRelativePath>
+    </DotNetPublishFiles>
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,4 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("NextjsStaticHosting.Test")]
+[assembly: InternalsVisibleTo("NextjsStaticHosting.AspNetCore.Test")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NextjsStaticHosting\NextjsStaticHosting.csproj" />
+    <ProjectReference Include="..\..\src\NextjsStaticHosting.AspNetCore\NextjsStaticHosting.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>
