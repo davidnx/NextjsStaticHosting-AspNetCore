@@ -15,24 +15,17 @@ namespace NextjsStaticHosting.Internals
         private readonly RequestDelegate next;
         private readonly HttpMessageInvoker httpClient;
 
-        private readonly string baseAddress;
-
         public ProxyToDevServerMiddleware(IOptions<NextjsStaticHostingOptions> options, IHttpForwarder yarpForwarder, RequestDelegate next)
         {
             this.options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             this.yarpForwarder = yarpForwarder ?? throw new ArgumentNullException(nameof(yarpForwarder));
             this.next = next ?? throw new ArgumentNullException(nameof(next));
 
-            if (!this.options.ProxyToDevServer)
+            if (!this.options.ProxyToDevServer ||
+                string.IsNullOrEmpty(this.options.DevServer))
             {
-                throw new InvalidOperationException($"{nameof(ProxyToDevServerMiddleware)} should only be added when {nameof(options)}.{nameof(NextjsStaticHostingOptions.ProxyToDevServer)} is set. This is a coding defect.");
+                throw new InvalidOperationException($"{nameof(ProxyToDevServerMiddleware)} should only be added when {nameof(options)}.{nameof(NextjsStaticHostingOptions.ProxyToDevServer)} is set and a valid {nameof(options)}.{nameof(NextjsStaticHostingOptions.DevServer)} is provided. This is a coding defect.");
             }
-
-            if (this.options.DevServer == null || !this.options.DevServer.IsAbsoluteUri)
-            {
-                throw new InvalidOperationException($"{nameof(options)}.{nameof(NextjsStaticHostingOptions.DevServer)} must be an absolute uri.");
-            }
-            this.baseAddress = this.options.DevServer.ToString();
 
             this.httpClient = new HttpMessageInvoker(new HttpClientHandler
             {
@@ -45,7 +38,7 @@ namespace NextjsStaticHosting.Internals
 
         public async Task InvokeAsync(HttpContext context)
         {
-            await this.yarpForwarder.SendAsync(context, this.baseAddress, this.httpClient, new ForwarderRequestConfig { ActivityTimeout = TimeSpan.FromMinutes(5) });
+            await this.yarpForwarder.SendAsync(context, this.options.DevServer, this.httpClient, new ForwarderRequestConfig { ActivityTimeout = TimeSpan.FromMinutes(5) });
         }
     }
 }

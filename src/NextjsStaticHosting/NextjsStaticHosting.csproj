@@ -2,8 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
-  </PropertyGroup>
 
+    <!-- Upgrade to C# 9 when targetting netcoreapp3.1 so that we can use init-only properties painlessly  -->
+    <LangVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">9</LangVersion>
+  </PropertyGroup>
+  
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>

@@ -37,6 +37,10 @@ namespace NextjsStaticHosting
 
             services.AddSingleton<FileProviderFactory>();
             services.AddSingleton<StaticFileOptionsProvider>();
+
+            // Add YARP (used only when `NextjsStaticHostingOptions.ProxyToDevServer` is true).
+            // See also: `ProxyToDevServerMiddleware`.
+            services.AddHttpForwarder();
         }
 
         /// <summary>
@@ -87,7 +91,7 @@ namespace NextjsStaticHosting
             if (options.Value.ProxyToDevServer)
             {
                 var logger = endpoints.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("NextjsStaticHostingExtensions");
-                logger.LogInformation($"{nameof(NextjsStaticHostingExtensions)} was configured with {nameof(NextjsStaticHostingOptions.ProxyToDevServer)}, skiping dynamic endpoint configuration.");
+                logger.LogInformation($"{nameof(NextjsStaticHostingExtensions)} was configured with {nameof(NextjsStaticHostingOptions.ProxyToDevServer)}, skipping dynamic endpoint configuration.");
                 return new NullEndpointConventionBuilder();
             }
 

@@ -23,7 +23,7 @@ namespace NextjsStaticHosting
         /// <summary>
         /// Uri to the Next.js dev server. Only applicable when <see cref="ProxyToDevServer"/> is true.
         /// </summary>
-        public Uri DevServer { get; set; }
+        public string DevServer { get; set; }
 
         /// <summary>
         /// Whether to proxy to a Next.js dev server instead of hosting static exported filed.
