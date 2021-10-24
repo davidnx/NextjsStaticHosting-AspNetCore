@@ -1,12 +1,96 @@
-# Hosting Next.js client-side apps on ASP .NET Core
+[![NuGet Gallery | NextjsStaticHosting.AspNetCore](https://img.shields.io/nuget/v/NextjsStaticHosting.AspNetCore?style=plastic)](https://www.nuget.org/packages/NextjsStaticHosting.AspNetCore)
+
+Host Next.js applications in production without Node.js. The most performant way there is, on ASP .NET Core.
 
 
-This library helps you host a statically-generated [Next.js](https://nextjs.org/) client-side application on ASP .NET Core with full support for SSG apps (see [Next.js: Server-side Rendering vs. Static Generation](https://vercel.com/blog/nextjs-server-side-rendering-vs-static-generation)).
+## 1. Hosting Next.js client-side apps on ASP .NET Core
+
+Welcome to NextjsStaticHosting.AspNetCore.
+This library helps you host a statically-generated [Next.js](https://nextjs.org/) client-side application on ASP .NET Core
+with full support for SSG apps
+(see [Next.js: Server-side Rendering vs. Static Generation](https://vercel.com/blog/nextjs-server-side-rendering-vs-static-generation)).
 
 This is an ideal and scalable option for large scale production deployments (more on this later) of Next.js apps without requiring Node.js on the server.
 
 
-# Why is this necessary?
+## 2. Scalability and Security considerations
+
+Because no custom code is exeuted to serve static files (other than ASP .NET Core's own highly optimized Endpoint Routing and Static Files capabilities), this is just about the most efficient way to host a staticcally generated Next.js application.
+
+Additionally, because we deliberately do not support dynamic SSR, you do not need to worry about running Node.js or JavaScript in your production servers.
+
+
+## 3. Limitations
+
+As mentioned, this library does not support Server Side Rendering, although it offers full support for SSG (Statically Generated content). This offers all of the advantages of SSR, expect for running dynamic JavaScript on the server while serving a request.
+
+A simple way to reason about this is as follows:
+
+* **If your Next.js application is eligible for [Static HTML Export](https://nextjs.org/docs/advanced-features/static-html-export), then it can be hosted on ASP .NET Core with this library. If not, then likely it will not work -- just run it on a Node.js server following Next.js existing docs.**
+
+
+## 4. Usage
+
+See the sections below to get started quickly.
+
+### Option 1: Running the sample with your own Next.js app
+
+1. Export your Next.js app using `npx next export`
+
+2. Copy the generated outputs from `out` to `.\samples\TrivialApp\TrivialApp.Client\out`
+
+3. Run `samples\TrivialApp\TrivialApp.Server` and try things out at `https://locahost:5001`.
+   1. If you in developmnt mode, requests for your Next.js content will be proxied to the local Next.js dev server (`http://localhost:3000`) by default.
+   2. Otherwise, content from `.\samples\TrivialApp\TrivialApp.Client\out` will be served
+
+
+### Option 2: Adding `NextjsStaticHosting` to an existing ASP .NET Core project (minimal API's)
+Modify your `Program.cs` as follows:
+
+```diff
++using NextjsStaticHosting.AspNetCore;
+
+ var builder = WebApplication.CreateBuilder(args);
+
++builder.Services.Configure<NextjsStaticHostingOptions>(builder.Configuration.GetSection("NextjsStaticHosting"));
++builder.Services.AddNextjsStaticHosting(options => options.RootPath = "wwwroot/ClientApp");
+
+ var app = builder.Build();
+ app.UseRouting();
+ app.UseEndpoints(endpoints =>
+ {
++    endpoints.MapNextjsStaticHtmls();
+ });
+
++app.UseNextjsStaticHosting();
+
+ app.Run();
+```
+
+### Option 3: Adding `NextjsStaticHosting` to an existing ASP .NET Core project (traditional startup style API's)
+Add the following to your `Startup.cs`:
+
+```diff
+ public void ConfigureServices(IServiceCollection services)
+ {
++    services.Configure<NextjsStaticHostingOptions>(builder.Configuration.GetSection("NextjsStaticHosting"));
++    services.AddNextjsStaticHosting(options => options.RootPath = "wwwroot/ClientApp");
+ }
+
+ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+ {
+     app.UseRouting();
+     app.UseEndpoints(endpoints =>
+     {
++        endpoints.MapNextjsStaticHtmls();
+     });
+
++    app.UseNextjsStaticHosting();
+}
+```
+
+
+## 5. Why is this necessary?
 
 Next.js applications are usually hosted on a Node.js server which, among other things, takes care of routing concerns and serves the appropriate files for each incoming request. While this is a fine choice in many scenarios, there are use cases where it may be desirable to use a different stack such as ASP .NET Core (e.g. for scalability concerns or because an application's backend may already use ASP .NET Core, and setting up a separate infra to host the client app may be challenging and / or costly).
 
@@ -31,67 +115,3 @@ When a browser issues a request for `/`, the server is expected to return the co
 The purpose of this library is to add the necessary routing configuration so that ASP .NET Core will serve the correct Next.js statically-generated HTML files according to user requests. **It leverages ASP .NET Core Endpoint Routing for unparalleled performance, and avoids any superfluous computations on the hot path**.
 
 By design, **this library does NOT support dynamic SSR (Server Side Rendering)**. Applications requiring dynamic Server Side Rendering likely would prefer or need to use Node.js on the server anyway.
-
-
-# Scalability and Security considerations
-
-Because no custom code is exeuted to serve static files (other than ASP .NET Core's own highly optimized Endpoint Routing and Static Files capabilities), this is just about the most efficient way to host a staticcally generated Next.js application.
-
-Additionally, because we deliberately do not support dynamic SSR, you do not need to worry about running Node.js or JavaScript in your production servers.
-
-
-# Limitations
-
-As mentioned, this library does not support Server Side Rendering, although it offers full support for SSG (Statically Generated content). This offers all of the advantages of SSR, expect for running dynamic JavaScript on the server while serving a request.
-
-A simple way to reason about this is as follows:
-
-* **If your Next.js application is eligible for [Static HTML Export](https://nextjs.org/docs/advanced-features/static-html-export), then it can be hosted on ASP .NET Core with this library. If not, then likely it will not work -- just run it on a Node.js server following Next.js existing docs.**
-
-
-# Usage
-
-See the sections below to get started quickly.
-
-## Running the sample with your own Next.js app
-
-1. Export your Next.js app using `npx next export`
-
-2. Copy the generated outputs from `out` to the sample app's `wwwroot/ClientApp` folder
-
-3. Run the sample and try things out at `https://locahost:5001`.
-
-
-## Adding `NextjsStaticHosting` to an existing ASP .NET Core project
-
-Add the following to your `Startup.cs`:
-
-```diff
- public void ConfigureServices(IServiceCollection services)
- {
-     //
-     // Other DI registrations...
-     //
-
-+    services.AddNextjsStaticHosting(options => options.RootPath = "wwwroot/ClientApp");
- }
-
- public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
- {
-     //
-     // Other middlewares...
-     //
-
-     app.UseRouting();
-     app.UseEndpoints(endpoints =>
-     {
-         //
-         // Other mappings...
-         //
-
-+        endpoints.MapNextjsStaticHtmls();
-     });
-
-+    app.UseNextjsStaticHosting();
-}
-```
