@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.FileProviders;
 
-namespace NextjsStaticHosting.Internals
+namespace NextjsStaticHosting.AspNetCore.Internals
 {
     internal class FileProviderFactory
     {

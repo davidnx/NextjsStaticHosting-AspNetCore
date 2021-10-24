@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
-namespace NextjsStaticHosting.Internals
+namespace NextjsStaticHosting.AspNetCore.Internals
 {
     /// <summary>
     /// Caches an instance of <see cref="StaticFileOptions"/>

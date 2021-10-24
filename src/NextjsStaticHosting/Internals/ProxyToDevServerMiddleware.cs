@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Yarp.ReverseProxy.Forwarder;
 
-namespace NextjsStaticHosting.Internals
+namespace NextjsStaticHosting.AspNetCore.Internals
 {
     internal class ProxyToDevServerMiddleware
     {

@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace NextjsStaticHosting.Internals.Test
+namespace NextjsStaticHosting.AspNetCore.Internals.Test
 {
     public class NextjsEndpointDataSourceTests
     {

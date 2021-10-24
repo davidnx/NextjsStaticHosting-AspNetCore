@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
-namespace NextjsStaticHosting.Internals
+namespace NextjsStaticHosting.AspNetCore.Internals
 {
     internal class NextjsEndpointDataSource : EndpointDataSource
     {
