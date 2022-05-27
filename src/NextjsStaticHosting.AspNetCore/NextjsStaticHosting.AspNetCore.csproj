@@ -10,7 +10,7 @@
 
   <PropertyGroup>
     <PackageId>NextjsStaticHosting.AspNetCore</PackageId>
-    <VersionPrefix>0.9.0</VersionPrefix>
+    <VersionPrefix>0.9.1</VersionPrefix>
 	<VersionSuffix>preview</VersionSuffix>
     <Authors>David Nissimoff</Authors>
     <Description>Host Next.js applications in production without Node.js. The most performant way there is, on ASP .NET Core.</Description>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Yarp.ReverseProxy" Version="1.0.0-rc.1.21520.4" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
