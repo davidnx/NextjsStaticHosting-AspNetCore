@@ -1,30 +1,57 @@
 [![NuGet Gallery | NextjsStaticHosting.AspNetCore](https://img.shields.io/nuget/v/NextjsStaticHosting.AspNetCore?style=plastic)](https://www.nuget.org/packages/NextjsStaticHosting.AspNetCore)
 
-Host Next.js applications in production without Node.js. The most performant way there is, on ASP .NET Core.
-
-
-## 1. Hosting Next.js client-side apps on ASP .NET Core
-
-Welcome to NextjsStaticHosting.AspNetCore.
-This library helps you host a statically-generated [Next.js](https://nextjs.org/) client-side application on ASP .NET Core
+Host a statically-generated [Next.js](https://nextjs.org/) client-side application on ASP .NET Core
 with full support for SSG apps
 (see [Next.js: Server-side Rendering vs. Static Generation](https://vercel.com/blog/nextjs-server-side-rendering-vs-static-generation)).
 
 This is an ideal and scalable option for large scale production deployments (more on this later) of Next.js apps without requiring Node.js on the server.
 
+## Benchmarks
 
-## 2. Usage
+Measured on Windows 11 version 21H2 (OS Build 22000.675) on an	AMD Ryzen 9 5900HX using latest LTS releases of .NET 6 (6.0.5) and Node.js (16.15.0) as of 5/27/2022.
+Tests were run against localhost on raw HTTP using Apache Bench Version 2.3 Revision: 1879490 as the test client.
 
-See the sections below to get started quickly.
+The ASP .NET Core project was published in Release configuration and executed without custom tweeaks. The Next.js app was run with `npm run start` without custom tweaks (see: [docs](https://nextjs.org/docs/deployment#nodejs-server)). Each scenario was run 3 times, and the median run is shown.
 
-### Option 1: Running the sample with your own Next.js app
+Measured throughput was ~6-7x greater on ASP .NET Core; P99 latency was ~2-4x better on ASP .NET Core.
+
+### Scenario 1: 10 concurrent, 50k requests
+
+Command line: `ab -c 10 -n 50000 -k http://localhost:PORT/post/1`
+
+Hosting stack | Avg (ms) | P99 (ms)
+--------------|----------|---------
+ASP .NET Core | 0.469    | 1
+Node.js       | 3.355    | 5
+
+
+### Scenario 2: 100 concurrent, 100k requests
+
+Command line: `ab -c 100 -n 100000 -k http://localhost:PORT/post/1`
+
+Hosting stack | Avg (ms)   | P99 (ms)
+--------------|------------|---------
+ASP .NET Core | 4.957      | 22
+Node.js       | 29.652     | 41
+
+### Is this a fair comparison?
+
+Not really, for a few reasons. But it is still informative:
+* The capabilities of the two stacks are not equivalent, and the ASP .NET Core hosting stack enabled by this project does not support SSR content. To a large degree, we are comparing apples and oranges. On the other hand, entire apps can be built without needing SSR. In those cases, the additional capabilities of running in Node.js are unused
+* Only measuring the time to load the HTML for a page. Loading other static content (js, css, etc.) may account for longer delays in observed page load performance in practice, and those aren't taken into account in these tests
+* Not necessarily following best practices for production hosting, though the setup followed the official guidance for both Next.js and ASP .NET Core without additinal tweaks in either
+* Run on Windows, whereas each stack could exhibit different perf characteristics on a different OS
+
+# Usage
+
+## Option 1: Running the sample with your own Next.js app
 
 1. Export your Next.js app using `npx next export`
 2. Copy the generated outputs from `out` to `.\samples\PreBuiltClientDemo\ClientApp`
 3. Run `samples\PreBuiltClientDemo` and see it working at `https://locahost:5001`.
 
 
-### Option 2: Adding `NextjsStaticHosting` to an existing ASP .NET Core project (minimal API's)
+## Option 2: Adding `NextjsStaticHosting` to an existing ASP .NET Core project (minimal API's)
 
 Modify your `Program.cs` as follows:
 
@@ -49,7 +76,7 @@ Modify your `Program.cs` as follows:
 ```
 
 
-### Option 3: Adding `NextjsStaticHosting` to an existing ASP .NET Core project (traditional startup style API's)
+## Option 3: Adding `NextjsStaticHosting` to an existing ASP .NET Core project (traditional startup style API's)
 
 Add the following to your `Startup.cs`:
 
@@ -72,8 +99,7 @@ Add the following to your `Startup.cs`:
 }
 ```
 
-
-## 3. Why is this necessary?
+# Why use ASP .NET Core
 
 Next.js applications are usually hosted on a Node.js server which, among other things, takes care of routing concerns and serves the appropriate files for each incoming request. While this is a fine choice in many scenarios, there are use cases where it may be desirable to use a different stack such as ASP .NET Core (e.g. for scalability concerns or because an application's backend may already use ASP .NET Core, and setting up a separate infra to host the client app may be challenging and / or costly).
 
