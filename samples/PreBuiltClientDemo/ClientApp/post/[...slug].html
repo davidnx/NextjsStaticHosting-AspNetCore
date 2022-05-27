@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Some post with catch-all slug</title>
+</head>
+<body>
+<h1>This is the /post/[...slug] page</h1>
+<p>
+    NOTE: This demo doesn't run any Javscript, so you really should see hardcoded placeholders like <code>[...slug]</code>.
+    <br/>
+    If this were an actual Next.js app, you could use <code>router.query</code> to render custom content as appropriate.
+</p>
+<p>It should be returned for requests issued to "/post/{*slug}". For example:</p>
+<ul>
+  <li>"/post/123/a"</li>
+  <li>"/post/a/b/c"</li>
+</ul>
+<p>It should NOT be returned for requests such as "/post/123", as that should instead serve page "/post/[pid].html".</p>
+<h2>Other places you can go:</h2>
+<ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/post">Posts index</a></li>
+</ul>
+</body>
+</html>

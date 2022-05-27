@@ -13,38 +13,19 @@ with full support for SSG apps
 This is an ideal and scalable option for large scale production deployments (more on this later) of Next.js apps without requiring Node.js on the server.
 
 
-## 2. Scalability and Security considerations
-
-Because no custom code is exeuted to serve static files (other than ASP .NET Core's own highly optimized Endpoint Routing and Static Files capabilities), this is just about the most efficient way to host a staticcally generated Next.js application.
-
-Additionally, because we deliberately do not support dynamic SSR, you do not need to worry about running Node.js or JavaScript in your production servers.
-
-
-## 3. Limitations
-
-As mentioned, this library does not support Server Side Rendering, although it offers full support for SSG (Statically Generated content). This offers all of the advantages of SSR, expect for running dynamic JavaScript on the server while serving a request.
-
-A simple way to reason about this is as follows:
-
-* **If your Next.js application is eligible for [Static HTML Export](https://nextjs.org/docs/advanced-features/static-html-export), then it can be hosted on ASP .NET Core with this library. If not, then likely it will not work -- just run it on a Node.js server following Next.js existing docs.**
-
-
-## 4. Usage
+## 2. Usage
 
 See the sections below to get started quickly.
 
 ### Option 1: Running the sample with your own Next.js app
 
 1. Export your Next.js app using `npx next export`
-
-2. Copy the generated outputs from `out` to `.\samples\TrivialApp\TrivialApp.Client\out`
-
-3. Run `samples\TrivialApp\TrivialApp.Server` and try things out at `https://locahost:5001`.
-   1. If you in developmnt mode, requests for your Next.js content will be proxied to the local Next.js dev server (`http://localhost:3000`) by default.
-   2. Otherwise, content from `.\samples\TrivialApp\TrivialApp.Client\out` will be served
+2. Copy the generated outputs from `out` to `.\samples\PreBuiltClientDemo\ClientApp`
+3. Run `samples\PreBuiltClientDemo` and see it working at `https://locahost:5001`.
 
 
 ### Option 2: Adding `NextjsStaticHosting` to an existing ASP .NET Core project (minimal API's)
+
 Modify your `Program.cs` as follows:
 
 ```diff
@@ -53,7 +34,7 @@ Modify your `Program.cs` as follows:
  var builder = WebApplication.CreateBuilder(args);
 
 +builder.Services.Configure<NextjsStaticHostingOptions>(builder.Configuration.GetSection("NextjsStaticHosting"));
-+builder.Services.AddNextjsStaticHosting(options => options.RootPath = "wwwroot/ClientApp");
++builder.Services.AddNextjsStaticHosting();
 
  var app = builder.Build();
  app.UseRouting();
@@ -67,14 +48,16 @@ Modify your `Program.cs` as follows:
  app.Run();
 ```
 
+
 ### Option 3: Adding `NextjsStaticHosting` to an existing ASP .NET Core project (traditional startup style API's)
+
 Add the following to your `Startup.cs`:
 
 ```diff
  public void ConfigureServices(IServiceCollection services)
  {
 +    services.Configure<NextjsStaticHostingOptions>(builder.Configuration.GetSection("NextjsStaticHosting"));
-+    services.AddNextjsStaticHosting(options => options.RootPath = "wwwroot/ClientApp");
++    services.AddNextjsStaticHosting();
  }
 
  public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -90,28 +73,45 @@ Add the following to your `Startup.cs`:
 ```
 
 
-## 5. Why is this necessary?
+## 3. Why is this necessary?
 
 Next.js applications are usually hosted on a Node.js server which, among other things, takes care of routing concerns and serves the appropriate files for each incoming request. While this is a fine choice in many scenarios, there are use cases where it may be desirable to use a different stack such as ASP .NET Core (e.g. for scalability concerns or because an application's backend may already use ASP .NET Core, and setting up a separate infra to host the client app may be challenging and / or costly).
 
-One may think that pure static hosting is possible thanks to Next.js' support for [Static HTML Export](https://nextjs.org/docs/advanced-features/static-html-export), and hence no additional server side support would be necessary. And one would be *almost* correct. While that statement bears some truth, and Static HTML Export is indeed an amazing feature of Next.js that this library relies on, it alone does not solve all problems.
+One may think that pure static hosting is possible thanks to Next.js' support for [Static HTML Export](https://nextjs.org/docs/advanced-features/static-html-export), and hence no additional server side support would be necessary. And one would be *almost* correct. While that statement bears some truth, and Static HTML Export is indeed a powerful feature of Next.js that this library relies on, it alone does not solve all problems.
 
-Particularly, it is critical to note that Next.js does **not** produce SPA's (Single Page Applications). While the framework goes through extreme lengths to ensure an optimal user experience on first-page-loads as well as for client-driven navigations without reloading the page, its design **requires** that the correct static content be served to the client during initial load. This is in fact one of its main advantages compared to other stacks.
+Critically, Next.js static export does **not** produce SPA's (Single Page Applications). Next.js goes through great lengths to ensure an optimal user experience on first-page-loads as well as for client-driven navigations without reloading the page, and its design **requires** that precisely the right page be served to the client during initial load of a page. This is in fact one of its main advantages compared to other stacks.
 
 For example, imagine a Next.js application consisting of the following pages:
 
 * `/pages/index.js`
 * `/pages/post/[pid].js`
 
-When statically exported to HTML using `npm next export`, the output will contain the following entry-point HTML files:
+When statically exported to HTML using `npm next export`, the exported output will contain the following entry-point HTML files:
 
 * `/out/index.html`
 * `/out/post/[pid].html`
 
 When a browser issues a request for `/`, the server is expected to return the contents of `/out/index.html`. Similarly, a request for `/post/123` is supposed to return the contents of `/out/post/[pid].html`. As long as the appropriate initial HTML is served for the incoming request paths, Next.js takes care of the rest, and will rehydrate the page on the client-side providing full React and interaction capabilities.
 
-**However**, if the wrong page is served (e.g., if `/out/index.html` were served on a request for `/post/123`), Next.js is unable to recover (by design!). The client will render the contents of `/pages/index.js` page even though the URL bar will say `/post/123`, and it will NOT rehydrate the contents that were expected for `/post/123` -- code running in the browser at that time in fact would not even know that it was supposed to be showing the contents of a different page.
+**However**, if the wrong page is served (e.g., if `/out/index.html` were served on a request for `/post/123`), rehydration won't work (by design!). The client will render the contents of `/pages/index.js` page even though the URL bar will say `/post/123`, and it will NOT rehydrate the contents that were expected for `/post/123` -- code running in the browser at that time in fact would not even know that it was supposed to be showing the contents of a different page.
 
-The purpose of this library is to add the necessary routing configuration so that ASP .NET Core will serve the correct Next.js statically-generated HTML files according to user requests. **It leverages ASP .NET Core Endpoint Routing for unparalleled performance, and avoids any superfluous computations on the hot path**.
+The purpose of this library is to add the necessary routing machinery so that ASP .NET Core serves the correct Next.js statically-generated HTML files according to user requests. **It leverages ASP .NET Core Endpoint Routing for unparalleled performance, and avoids any superfluous computations on the hot path**.
 
 By design, **this library does NOT support dynamic SSR (Server Side Rendering)**. Applications requiring dynamic Server Side Rendering likely would prefer or need to use Node.js on the server anyway.
+
+
+## 4. Scalability and Security considerations
+
+Because no custom code is exeuted to serve static files (other than ASP .NET Core's built-in Endpoint Routing and Static Files), this is just about the most efficient way to host a statically generated Next.js application.
+
+Additionally, because we deliberately do not support dynamic SSR, you do not need to worry about running Node.js or JavaScript in your production servers.
+
+
+## 5. Limitations
+
+By design, this library does not support Server Side Rendering, yet it offers full support for SSG (Static Site Generation). This offers many of the advantages of SSR, including fast initial load and SEO-friendliness.
+
+A simple way to reason about this is as follows:
+
+> **If your Next.js application is eligible for [Static HTML Export](https://nextjs.org/docs/advanced-features/static-html-export), then it can be hosted on ASP .NET Core with this library.**
+

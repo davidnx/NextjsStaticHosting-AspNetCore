@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30413.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextjsStaticHosting.AspNetCore", "src\NextjsStaticHosting.AspNetCore\NextjsStaticHosting.AspNetCore.csproj", "{6E9A0B23-AEF8-47AF-9A24-76D8DF30C0E2}"
 EndProject
@@ -13,7 +13,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextjsStaticHosting.AspNetC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{AB8F5296-5E51-482E-9CE9-13384A204D91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrivialApp", "samples\TrivialApp\TrivialApp.Server\TrivialApp.Server.csproj", "{AC028F5E-F9F5-43FE-A5AE-E28A7BEB7178}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActualNextjsApp.Server", "samples\ActualNextjsApp\ActualNextjsApp.Server\ActualNextjsApp.Server.csproj", "{AC028F5E-F9F5-43FE-A5AE-E28A7BEB7178}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreBuiltClientDemo", "samples\PreBuiltClientDemo\PreBuiltClientDemo.csproj", "{389096DC-2E97-479F-A3C3-7523DCB92299}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5E3EE226-40BE-42B1-A55D-FA35B8AEDBCC}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +41,10 @@ Global
 		{AC028F5E-F9F5-43FE-A5AE-E28A7BEB7178}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC028F5E-F9F5-43FE-A5AE-E28A7BEB7178}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC028F5E-F9F5-43FE-A5AE-E28A7BEB7178}.Release|Any CPU.Build.0 = Release|Any CPU
+		{389096DC-2E97-479F-A3C3-7523DCB92299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{389096DC-2E97-479F-A3C3-7523DCB92299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{389096DC-2E97-479F-A3C3-7523DCB92299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{389096DC-2E97-479F-A3C3-7523DCB92299}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +53,7 @@ Global
 		{6E9A0B23-AEF8-47AF-9A24-76D8DF30C0E2} = {CCCA0538-4989-4F46-9544-74E75AC3F50C}
 		{D3B6E8A4-2533-4DC0-A391-DDB3495B49C4} = {1860F7B0-378B-40E5-92F3-8535F08643B3}
 		{AC028F5E-F9F5-43FE-A5AE-E28A7BEB7178} = {AB8F5296-5E51-482E-9CE9-13384A204D91}
+		{389096DC-2E97-479F-A3C3-7523DCB92299} = {AB8F5296-5E51-482E-9CE9-13384A204D91}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {493F75AA-94E3-4700-9FD9-FF3C49395A00}
