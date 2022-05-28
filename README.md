@@ -11,7 +11,7 @@ This is an ideal and scalable option for large scale production deployments (mor
 Measured on Windows 11 version 21H2 (OS Build 22000.675) on an	AMD Ryzen 9 5900HX using latest LTS releases of .NET 6 (6.0.5) and Node.js (16.15.0) as of 5/27/2022.
 Tests were run against localhost on raw HTTP using Apache Bench Version 2.3 Revision: 1879490 as the test client.
 
-The ASP .NET Core project was published in Release configuration and executed without custom tweeaks. The Next.js app was run with `npm run start` without custom tweaks (see: [docs](https://nextjs.org/docs/deployment#nodejs-server)). Each scenario was run 3 times, and the median run is shown.
+The ASP .NET Core project was published in Release configuration and executed without custom tweaks. The Next.js app was run with `npm run start` without custom tweaks (see: [docs](https://nextjs.org/docs/deployment#nodejs-server)). Each scenario was run 3 times, and the median run is shown.
 
 Measured throughput was ~6-7x greater on ASP .NET Core; P99 latency was ~2-4x better on ASP .NET Core.
 
@@ -39,7 +39,7 @@ Node.js       | 29.652     | 41
 Not really, for a few reasons. But it is still informative:
 * The capabilities of the two stacks are not equivalent, and the ASP .NET Core hosting stack enabled by this project does not support SSR content. To a large degree, we are comparing apples and oranges. On the other hand, entire apps can be built without needing SSR. In those cases, the additional capabilities of running in Node.js are unused
 * Only measuring the time to load the HTML for a page. Loading other static content (js, css, etc.) may account for longer delays in observed page load performance in practice, and those aren't taken into account in these tests
-* Not necessarily following best practices for production hosting, though the setup followed the official guidance for both Next.js and ASP .NET Core without additinal tweaks in either
+* Not necessarily following best practices for production hosting, though the setup followed the official guidance for both Next.js and ASP .NET Core without additional tweaks in either
 * Run on Windows, whereas each stack could exhibit different perf characteristics on a different OS
 
 # Usage
@@ -126,14 +126,14 @@ The purpose of this library is to add the necessary routing machinery so that AS
 By design, **this library does NOT support dynamic SSR (Server Side Rendering)**. Applications requiring dynamic Server Side Rendering likely would prefer or need to use Node.js on the server anyway.
 
 
-## 4. Scalability and Security considerations
+## Scalability and Security considerations
 
-Because no custom code is exeuted to serve static files (other than ASP .NET Core's built-in Endpoint Routing and Static Files), this is just about the most efficient way to host a statically generated Next.js application.
+Because no custom code is executed to serve static files (other than ASP .NET Core's built-in Endpoint Routing and Static Files), this is just about the most efficient way to host a statically generated Next.js application.
 
 Additionally, because we deliberately do not support dynamic SSR, you do not need to worry about running Node.js or JavaScript in your production servers.
 
 
-## 5. Limitations
+## Limitations
 
 By design, this library does not support Server Side Rendering, yet it offers full support for SSG (Static Site Generation). This offers many of the advantages of SSR, including fast initial load and SEO-friendliness.
 
