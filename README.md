@@ -1,7 +1,7 @@
 [![NuGet Gallery | NextjsStaticHosting.AspNetCore](https://img.shields.io/nuget/v/NextjsStaticHosting.AspNetCore?style=plastic)](https://www.nuget.org/packages/NextjsStaticHosting.AspNetCore)
 
 Host a statically-generated [Next.js](https://nextjs.org/) client-side application on ASP .NET Core
-with full support for SSG apps
+with full support for SSG apps, including Dynamic Routes
 (see [Next.js: Server-side Rendering vs. Static Generation](https://vercel.com/blog/nextjs-server-side-rendering-vs-static-generation)).
 
 This is an ideal and scalable option for large scale production deployments (more on this later) of Next.js apps without requiring Node.js on the server.
