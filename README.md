@@ -5,6 +5,7 @@ with full support for SSG apps, including Dynamic Routes
 (see [Next.js: Server-side Rendering vs. Static Generation](https://vercel.com/blog/nextjs-server-side-rendering-vs-static-generation)).
 
 This is an ideal and scalable option for large scale production deployments of Next.js apps without requiring Node.js on the server.
+See the [blog post](https://medium.com/@david.nissimoff/next-js-meets-asp-net-core-a-story-of-performance-and-love-at-long-tail-41cf9231b2de)
 
 # Usage
 
