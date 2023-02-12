@@ -30,11 +30,7 @@ Modify your `Program.cs` as follows:
 
  var app = builder.Build();
  app.UseRouting();
- app.UseEndpoints(endpoints =>
- {
-+    endpoints.MapNextjsStaticHtmls();
- });
-
++app.MapNextjsStaticHtmls();
 +app.UseNextjsStaticHosting();
 
  app.Run();
@@ -55,11 +51,7 @@ Add the following to your `Startup.cs`:
  public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
  {
      app.UseRouting();
-     app.UseEndpoints(endpoints =>
-     {
-+        endpoints.MapNextjsStaticHtmls();
-     });
-
++    app.MapNextjsStaticHtmls();
 +    app.UseNextjsStaticHosting();
  }
 ```
