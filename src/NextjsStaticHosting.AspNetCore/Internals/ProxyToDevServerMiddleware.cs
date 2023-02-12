@@ -51,6 +51,7 @@ namespace NextjsStaticHosting.AspNetCore.Internals
                 return;
             }
 
+#if NET6_0_OR_GREATER
             // This can be removed once we upgrade to YARP 2.0 (issue: https://github.com/microsoft/reverse-proxy/issues/1375)
             // See: https://github.com/microsoft/reverse-proxy/issues/1375#issuecomment-1366099983
             if (context.Request.Method == HttpMethods.Connect && context.Request.Protocol != HttpProtocol.Http11)
@@ -64,6 +65,7 @@ namespace NextjsStaticHosting.AspNetCore.Internals
                     return;
                 }
             }
+#endif
 
             var error = await this.yarpForwarder.SendAsync(context, this.options.DevServer, this.httpClient, new ForwarderRequestConfig { ActivityTimeout = TimeSpan.FromMinutes(5) });
             switch (error)
