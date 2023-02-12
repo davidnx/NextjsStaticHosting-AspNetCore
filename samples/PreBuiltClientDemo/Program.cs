@@ -10,11 +10,9 @@ builder.Services.AddNextjsStaticHosting();
 
 var app = builder.Build();
 app.UseRouting();
-app.UseEndpoints(endpoints =>
-{
-    // Step 2: Register dynamic endpoints to serve the correct HTML files at the right request paths.
-    endpoints.MapNextjsStaticHtmls();
-});
+
+// Step 2: Register dynamic endpoints to serve the correct HTML files at the right request paths.
+app.MapNextjsStaticHtmls();
 
 // Step 3: Serve other required files (e.g. js, css files in the exported next.js app).
 app.UseNextjsStaticHosting();
