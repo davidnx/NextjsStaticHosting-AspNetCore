@@ -1,0 +1,54 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "PreBuiltClientDemo",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/samples/PreBuiltClientDemo/bin/Debug/net7.0/PreBuiltClientDemo.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/samples/PreBuiltClientDemo",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "ActualNextjsApp.Server",
+            // Starts ActualNextjsApp.Server, which expects to find the local Next.js dev server running at http://localhost:3000.
+            // You need to manually start the Next.js dev server for ActualNextJsApp.Client for this to work. For example:
+            //   ```
+            //   cd samples/ActualNextjsApp/ActualNextjsApp.Client && npm run dev
+            //   ```
+            //
+            // If you don't run the dev server correctly, you may see an error like this when you try to access the sample app in a browser:
+            //   ```
+            //   [NextjsStaticHosting.AspNetCore] Unable to reach Next.js dev server. Please ensure it is running at http://localhost:3000/.
+            //   ```
+            //
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/samples/ActualNextjsApp/ActualNextjsApp.Server/bin/Debug/net7.0/ActualNextjsApp.Server.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/samples/ActualNextjsApp/ActualNextjsApp.Server",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+    ]
+}
