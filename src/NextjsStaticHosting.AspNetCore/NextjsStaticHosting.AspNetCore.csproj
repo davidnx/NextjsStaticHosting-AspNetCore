@@ -1,11 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-
-    <!-- Upgrade to C# 9 when targetting netcoreapp3.1 so that we can use init-only properties painlessly  -->
-    <LangVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">9</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -26,10 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Yarp.ReverseProxy" Version="1.1.2" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-	<None Include=".\logo.png" Pack="true" PackagePath="\"/>
+	<None Include=".\logo.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
