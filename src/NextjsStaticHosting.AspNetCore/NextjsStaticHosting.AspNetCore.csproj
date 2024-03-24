@@ -2,20 +2,20 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>NextjsStaticHosting.AspNetCore</PackageId>
-    <VersionPrefix>0.9.2</VersionPrefix>
-	<VersionSuffix>preview</VersionSuffix>
+    <VersionPrefix>0.9.3</VersionPrefix>
+    <VersionSuffix>preview</VersionSuffix>
     <Authors>David Nissimoff</Authors>
     <Description>Host Next.js applications in production without Node.js. The most performant way there is, on ASP .NET Core.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>aspnetcore;nextjs;next.js;next;react;nodejs;node.js;node</PackageTags>
     <ProjectUrl>https://github.com/davidnx/NextjsStaticHosting-AspNetCore</ProjectUrl>
     <RepositoryUrl>https://github.com/davidnx/NextjsStaticHosting-AspNetCore</RepositoryUrl>
-	<PackageIcon>logo.png</PackageIcon>
+    <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
   
   <ItemGroup>
@@ -27,6 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	<None Include=".\logo.png" Pack="true" PackagePath="\" />
+    <None Include=".\logo.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
